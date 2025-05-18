@@ -11,26 +11,26 @@ export class CreateTaxRegisterConfigurationDto {
   @ApiProperty({ example: 'ASDFAJSDFHKJHKJFHAKJLSDHGFKJAS' })
   @IsString()
   @IsNotEmpty()
-  api_key: string | undefined;
+  api_key: string;
 
   @ApiProperty({ example: 'Main configuration for the app' })
   @IsString()
   @IsNotEmpty()
-  description: string | undefined;
+  description: string;
 
   @ApiProperty({ example: 0, enum: EnviromentType })
   @IsNumber()
   @IsNotEmpty()
   @IsEnum(EnviromentType)
-  environment: number | undefined;
+  environment: number;
 
   @ApiProperty({ example: 1 })
   @IsNumber()
   @IsNotEmpty()
-  company_id: number | undefined;
+  company_id: number;
 
   @ApiProperty({ example: 1 })
   @IsNumber()
   @IsNotEmpty()
-  user_id: number | undefined;
+  user_id: number;
 }
