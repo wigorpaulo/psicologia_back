@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  BadRequestException,
+} from '@nestjs/common';
 import { CreateTaxRegisterConfigurationDto } from './dto/create-tax_register_configuration.dto';
 import { UpdateTaxRegisterConfigurationDto } from './dto/update-tax_register_configuration.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -15,6 +19,14 @@ export class TaxRegisterConfigurationsService {
   async create(
     createTaxRegisterConfigurationDto: CreateTaxRegisterConfigurationDto,
   ): Promise<TaxRegisterConfigurations> {
+    const isUnique = await this.is_unique_api_key(
+      createTaxRegisterConfigurationDto.api_key,
+    );
+
+    if (!isUnique) {
+      throw new BadRequestException('API key already exists');
+    }
+
     const newConfig = this.taxRegisterConfigRepo.create({
       ...createTaxRegisterConfigurationDto,
       created_at: new Date(),
@@ -36,6 +48,14 @@ export class TaxRegisterConfigurationsService {
     id: number,
     updateTaxRegisterConfigurationDto: UpdateTaxRegisterConfigurationDto,
   ): Promise<TaxRegisterConfigurations> {
+    const isUnique = await this.is_unique_api_key(
+      updateTaxRegisterConfigurationDto.api_key,
+    );
+
+    if (!isUnique) {
+      throw new BadRequestException('API key already exists');
+    }
+
     const config = await this.taxRegisterConfigRepo.findOne({ where: { id } });
 
     if (!config) {
@@ -56,5 +76,15 @@ export class TaxRegisterConfigurationsService {
         `TaxRegisterConfiguration with ID ${id} not found`,
       );
     }
+  }
+
+  private async is_unique_api_key(
+    api_key: string | undefined,
+  ): Promise<boolean> {
+    const count = await this.taxRegisterConfigRepo.count({
+      where: { api_key },
+    });
+
+    return count === 0;
   }
 }
