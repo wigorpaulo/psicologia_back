@@ -2,38 +2,40 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateTaxRegisterConfigurationDto } from './dto/create-tax_register_configuration.dto';
 import { UpdateTaxRegisterConfigurationDto } from './dto/update-tax_register_configuration.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { TaxRegisterConfiguration } from './entities/tax_register_configuration.entity';
+import { TaxRegisterConfigurations } from './entities/tax_register_configurations.entity';
 import { Repository } from 'typeorm';
 
 @Injectable()
 export class TaxRegisterConfigurationsService {
   constructor(
-    @InjectRepository(TaxRegisterConfiguration)
-    private readonly taxRegisterConfigRepo: Repository<TaxRegisterConfiguration>,
+    @InjectRepository(TaxRegisterConfigurations)
+    private readonly taxRegisterConfigRepo: Repository<TaxRegisterConfigurations>,
   ) {}
 
   async create(
     createTaxRegisterConfigurationDto: CreateTaxRegisterConfigurationDto,
-  ): Promise<TaxRegisterConfiguration> {
-    const newConfig = this.taxRegisterConfigRepo.create(
-      createTaxRegisterConfigurationDto,
-    );
+  ): Promise<TaxRegisterConfigurations> {
+    const newConfig = this.taxRegisterConfigRepo.create({
+      ...createTaxRegisterConfigurationDto,
+      created_at: new Date(),
+      updated_at: new Date(),
+    });
 
     return await this.taxRegisterConfigRepo.save(newConfig);
   }
 
-  async findAll(): Promise<TaxRegisterConfiguration[]> {
+  async findAll(): Promise<TaxRegisterConfigurations[]> {
     return await this.taxRegisterConfigRepo.find();
   }
 
-  async findOne(id: number): Promise<TaxRegisterConfiguration | null> {
+  async findOne(id: number): Promise<TaxRegisterConfigurations | null> {
     return await this.taxRegisterConfigRepo.findOne({ where: { id } });
   }
 
   async update(
     id: number,
     updateTaxRegisterConfigurationDto: UpdateTaxRegisterConfigurationDto,
-  ): Promise<TaxRegisterConfiguration> {
+  ): Promise<TaxRegisterConfigurations> {
     const config = await this.taxRegisterConfigRepo.findOne({ where: { id } });
 
     if (!config) {
