@@ -11,7 +11,9 @@ describe('TaxRegisterConfigurationsController', () => {
       providers: [TaxRegisterConfigurationsService],
     }).compile();
 
-    controller = module.get<TaxRegisterConfigurationsController>(TaxRegisterConfigurationsController);
+    controller = module.get<TaxRegisterConfigurationsController>(
+      TaxRegisterConfigurationsController,
+    );
   });
 
   it('should be defined', () => {
